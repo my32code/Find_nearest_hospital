@@ -1,5 +1,5 @@
 <?php
-$pdo = new PDO('mysql:host=localhost;dbname=database_name;charset=utf8', 'username', 'password');
+$pdo =new PDO('mysql:host=localhost;dbname=soutenance1;charset=utf8', 'root', '');
 
 $id = $_POST['id'];
 
