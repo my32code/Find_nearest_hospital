@@ -11,4 +11,4 @@ $email = $_POST['email'];
 $stmt = $pdo->prepare("UPDATE patient SET nom = ?, prenom = ?, id_hpt = ?, numero = ?, email = ? WHERE id_pat = ?");
 $stmt->execute([$patientName, $patientFirstName, $hospital, $phoneNumber, $email, $id]);
 
-header('Location: index.php');
+header('Location: dashbord.php');

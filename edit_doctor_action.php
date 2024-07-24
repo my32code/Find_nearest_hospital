@@ -11,4 +11,4 @@ $phoneNumber = $_POST['phoneNumber'];
 $stmt = $pdo->prepare("UPDATE docteur SET nom = ?, prenom = ?, id_hpt = ?, id_sp = ?, numero = ? WHERE id_doc = ?");
 $stmt->execute([$doctorName, $doctorFirstName, $hospital, $speciality, $phoneNumber, $id]);
 
-header('Location: index.php');
+header('Location: dashbord.php');

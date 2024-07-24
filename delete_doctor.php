@@ -28,7 +28,7 @@
             <p><strong>Spécialité :</strong> <?php echo $doctor['id_sp']; ?></p>
             <p><strong>Téléphone :</strong> <?php echo $doctor['numero']; ?></p>
             <button type="submit" class="btn btn-danger">Supprimer</button>
-            <a href="index.php" class="btn btn-secondary">Annuler</a>
+            <a href="dashbord.php" class="btn btn-secondary">Annuler</a>
         </form>
     </div>
 </body>

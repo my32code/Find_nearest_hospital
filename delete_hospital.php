@@ -25,7 +25,7 @@
             <p><strong>Nom :</strong> <?php echo $hospital['nom']; ?></p>
             <p><strong>Adresse :</strong> <?php echo $hospital['latitude'] . ", " . $hospital['longitude']; ?></p>
             <button type="submit" class="btn btn-danger">Supprimer</button>
-            <a href="index.php" class="btn btn-secondary">Annuler</a>
+            <a href="dashbord.php" class="btn btn-secondary">Annuler</a>
         </form>
     </div>
 </body>

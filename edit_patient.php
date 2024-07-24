@@ -50,7 +50,7 @@
                 <input type="email" class="form-control" id="email" name="email" value="<?php echo $patient['email']; ?>" required>
             </div>
             <button type="submit" class="btn btn-primary">Enregistrer</button>
-            <a href="index.php" class="btn btn-secondary">Retour</a>
+            <a href="dashbord.php" class="btn btn-secondary">Retour</a>
         </form>
     </div>
 </body>

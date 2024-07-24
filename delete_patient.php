@@ -28,7 +28,7 @@
             <p><strong>Téléphone :</strong> <?php echo $patient['numero']; ?></p>
             <p><strong>Email :</strong> <?php echo $patient['email']; ?></p>
             <button type="submit" class="btn btn-danger">Supprimer</button>
-            <a href="index.php" class="btn btn-secondary">Annuler</a>
+            <a href="dashbord.php" class="btn btn-secondary">Annuler</a>
         </form>
     </div>
 </body>

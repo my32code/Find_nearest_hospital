@@ -6,4 +6,4 @@ $id = $_POST['id'];
 $stmt = $pdo->prepare("DELETE FROM hopital WHERE id_hpt = ?");
 $stmt->execute([$id]);
 
-header('Location: index.php');
+header('Location: dashbord.php');

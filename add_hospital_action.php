@@ -10,4 +10,4 @@ $phoneNumber = $_POST['phoneNumber'];
 $stmt = $pdo->prepare("INSERT INTO hopital (nom, latitude, longitude, id_ad, numero) VALUES (?, ?, ?, ?, ?)");
 $stmt->execute([$hospitalName, $latitude, $longitude, $address, $phoneNumber]);
 
-header('Location: index.php');
+header('Location: dashbord.php');

@@ -58,7 +58,7 @@
                 <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" value="<?php echo $doctor['numero']; ?>" required>
             </div>
             <button type="submit" class="btn btn-primary">Enregistrer</button>
-            <a href="index.php" class="btn btn-secondary">Retour</a>
+            <a href="dashbord.php" class="btn btn-secondary">Retour</a>
         </form>
     </div>
 </body>
