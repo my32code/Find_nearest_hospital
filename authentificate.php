@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($username === $default_username && $password === $default_password) {
         $_SESSION['username'] = $username;
-        header('Location: index.php');
+        header('Location: dashbord.php');
         exit();
     } else {
         header('Location: login.php?error=1');
