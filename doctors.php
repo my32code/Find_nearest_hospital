@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Patients</title>
+    <title>Medecins</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        body {
+       body {
             display: flex;
             height: 100vh;
             margin: 0;
@@ -61,7 +61,7 @@
     </div>
     <div class="content">
         <div class="container">
-            <h2>Patients</h2>
+            <h2>Medecins</h2>
             <table class="table table-striped mt-3">
                 <thead>
                     <tr>
@@ -69,8 +69,8 @@
                         <th>Nom</th>
                         <th>Prénom</th>
                         <th>Hôpital</th>
+                        <th>Spécialité</th>
                         <th>Téléphone</th>
-                        <th>Email</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -79,23 +79,24 @@
                     // Connexion à la base de données
                     $pdo = new PDO('mysql:host=localhost;dbname=soutenance1;charset=utf8', 'root', '');
                     
-                    // Récupération des patients
+                    // Récupération des médecins
                     $stmt = $pdo->query("
-                        SELECT patient.*, hopital.nom AS hospital_name 
-                        FROM patient 
-                        JOIN hopital ON patient.id_hpt = hopital.id_hpt
+                        SELECT docteur.*, hopital.nom AS hospital_name, speciality.libelle AS speciality_name 
+                        FROM docteur 
+                        JOIN hopital ON docteur.id_hpt = hopital.id_hpt 
+                        JOIN speciality ON docteur.id_sp = speciality.id_sp
                     ");
                     while ($row = $stmt->fetch()) {
                         echo "<tr>
-                            <td>{$row['id_pat']}</td>
+                            <td>{$row['id_doc']}</td>
                             <td>{$row['nom']}</td>
                             <td>{$row['prenom']}</td>
                             <td>{$row['hospital_name']}</td>
+                            <td>{$row['speciality_name']}</td>
                             <td>{$row['numero']}</td>
-                            <td>{$row['email']}</td>
                             <td>
-                                <a href='edit_patient.php?id={$row['id_pat']}' class='btn btn-warning btn-sm'>Modifier</a>
-                                <a href='delete_patient.php?id={$row['id_pat']}' class='btn btn-danger btn-sm'>Supprimer</a>
+                                <a href='edit_doctor.php?id={$row['id_doc']}' class='btn btn-warning btn-sm'>Modifier</a>
+                                <a href='delete_doctor.php?id={$row['id_doc']}' class='btn btn-danger btn-sm'>Supprimer</a>
                             </td>
                         </tr>";
                     }
