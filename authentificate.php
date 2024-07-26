@@ -25,14 +25,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     } 
     else {
-        // Redirection avec message d'erreur
-        header('Location: login.php?error=1');
+        echo "Identifiants incorrects";
         exit();
     }
 } 
 else {
-    // Redirection si la requête n'est pas POST
-    header('Location: login.php');
+    header('Location: index.php');
     exit();
 }
 ?>

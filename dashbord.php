@@ -14,7 +14,7 @@
             font-family: Arial, sans-serif;
         }
         .sidebar {
-            width: 250px;
+            width: 200px; /* Réduction de la taille de la barre latérale */
             background-color: #007bff;
             color: #fff;
             padding-top: 20px;
@@ -26,12 +26,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 15px;
+            padding: 10px; /* Réduction de la taille de padding */
             width: 100%;
             text-decoration: none;
             color: #fff;
             transition: background-color 0.3s, transform 0.3s;
-            margin: 10px 0;
+            margin: 5px 0; /* Réduction de l'espacement entre les éléments */
         }
         .sidebar a:hover {
             background-color: #0056b3;
@@ -57,6 +57,7 @@
         <a href="dashbord.php"><i class="fas fa-hospital"></i> Gestion des Hôpitaux</a>
         <a href="doctors.php"><i class="fas fa-user-md"></i> Médecins</a>
         <a href="patients.php"><i class="fas fa-procedures"></i> Patients</a>
+        <a href="user.php"><i class="fas fa-user"></i> Utilisateur</a> <!-- Icône d'utilisateur ajoutée -->
         <a href="index.php"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
     </div>
     <div class="content">
@@ -72,6 +73,7 @@
                         <th>Longitude</th>
                         <th>Adresse</th>
                         <th>Téléphone</th>
+                        <th>Horaires</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -82,20 +84,23 @@
                     
                     // Récupération des hôpitaux
                     $stmt = $pdo->query("SELECT * FROM hopital JOIN adress ON hopital.id_ad = adress.id_ad");
+                    $index = 1; // Initialisation de l'index pour la numérotation
                     while ($row = $stmt->fetch()) {
                         echo "
                         <tr>
-                            <td>{$row['id_hpt']}</td>
+                            <td>{$index}</td> <!-- Utilisation de l'index pour la numérotation -->
                             <td>{$row['nom']}</td>
                             <td>{$row['latitude']}</td>
                             <td>{$row['longitude']}</td>
                             <td>{$row['ville']}, {$row['commune']}, {$row['arrondissement']}</td>
                             <td>{$row['numero']}</td>
+                            <td>{$row['horaire']}</td>
                             <td>
                                 <a href='edit_hospital.php?id={$row['id_hpt']}' class='btn btn-warning btn-sm'>Modifier</a>
                                 <a href='delete_hospital.php?id={$row['id_hpt']}' class='btn btn-danger btn-sm'>Supprimer</a>
                             </td>
                         </tr>";
+                        $index++; // Incrémentation de l'index
                     }
                     ?>
                 </tbody>
@@ -129,9 +134,10 @@
                         JOIN hopital ON docteur.id_hpt = hopital.id_hpt 
                         JOIN speciality ON docteur.id_sp = speciality.id_sp
                     ");
+                    $index = 1; // Initialisation de l'index pour la numérotation
                     while ($row = $stmt->fetch()) {
                         echo "<tr>
-                            <td>{$row['id_doc']}</td>
+                            <td>{$index}</td> <!-- Utilisation de l'index pour la numérotation -->
                             <td>{$row['nom']}</td>
                             <td>{$row['prenom']}</td>
                             <td>{$row['hospital_name']}</td>
@@ -142,6 +148,7 @@
                                 <a href='delete_doctor.php?id={$row['id_doc']}' class='btn btn-danger btn-sm'>Supprimer</a>
                             </td>
                         </tr>";
+                        $index++; // Incrémentation de l'index
                     }
                     ?>
                 </tbody>
@@ -173,9 +180,10 @@
                         FROM patient 
                         JOIN hopital ON patient.id_hpt = hopital.id_hpt
                     ");
+                    $index = 1; // Initialisation de l'index pour la numérotation
                     while ($row = $stmt->fetch()) {
                         echo "<tr>
-                            <td>{$row['id_pat']}</td>
+                            <td>{$index}</td> <!-- Utilisation de l'index pour la numérotation -->
                             <td>{$row['nom']}</td>
                             <td>{$row['prenom']}</td>
                             <td>{$row['hospital_name']}</td>
@@ -186,6 +194,7 @@
                                 <a href='delete_patient.php?id={$row['id_pat']}' class='btn btn-danger btn-sm'>Supprimer</a>
                             </td>
                         </tr>";
+                        $index++; // Incrémentation de l'index
                     }
                     ?>
                 </tbody>
