@@ -32,6 +32,7 @@
             color: #fff;
             transition: background-color 0.3s, transform 0.3s;
             margin: 5px 0; /* Réduction de l'espacement entre les éléments */
+            flex-direction: column; /* Alignement des icônes et du texte */
         }
         .sidebar a:hover {
             background-color: #0056b3;
@@ -40,6 +41,10 @@
         .sidebar a i {
             margin-right: 10px;
             font-size: 1.5em;
+        }
+        .sidebar .hopital-icon {
+            font-size: 3em; /* Augmentation de la taille de l'icône de l'utilisateur */
+            margin-bottom: 20px;
         }
         .content {
             flex-grow: 1;
@@ -54,10 +59,10 @@
 </head>
 <body>
     <div class="sidebar">
-        <a href="dashbord.php"><i class="fas fa-hospital"></i> Gestion des Hôpitaux</a>
+        <span><i class="fas fa-hospital hopital-icon"></i></span></a> <!-- Icône d'hopital agrandie -->
+        <a href="dashbord.php"><i class="fas fa-h-square"></i> Gestion des Hôpitaux</a>
         <a href="doctors.php"><i class="fas fa-user-md"></i> Médecins</a>
         <a href="patients.php"><i class="fas fa-procedures"></i> Patients</a>
-        <a href="user.php"><i class="fas fa-user"></i> Utilisateur</a> <!-- Icône d'utilisateur ajoutée -->
         <a href="index.php"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
     </div>
     <div class="content">
@@ -108,52 +113,54 @@
         </div>
 
         <div class="container">
-            <h2>Médecins</h2>
-            <a href="add_doctor.php" class="btn btn-primary">Ajouter un Médecin</a>
-            <table class="table table-striped mt-3">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Nom</th>
-                        <th>Prénom</th>
-                        <th>Hôpital</th>
-                        <th>Spécialité</th>
-                        <th>Téléphone</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    // Connexion à la base de données
-                    $pdo = new PDO('mysql:host=localhost;dbname=soutenance1;charset=utf8', 'root', '');
-                    
-                    // Récupération des médecins
-                    $stmt = $pdo->query("
-                        SELECT docteur.*, hopital.nom AS hospital_name, speciality.libelle AS speciality_name 
-                        FROM docteur 
-                        JOIN hopital ON docteur.id_hpt = hopital.id_hpt 
-                        JOIN speciality ON docteur.id_sp = speciality.id_sp
-                    ");
-                    $index = 1; // Initialisation de l'index pour la numérotation
-                    while ($row = $stmt->fetch()) {
-                        echo "<tr>
-                            <td>{$index}</td> <!-- Utilisation de l'index pour la numérotation -->
-                            <td>{$row['nom']}</td>
-                            <td>{$row['prenom']}</td>
-                            <td>{$row['hospital_name']}</td>
-                            <td>{$row['speciality_name']}</td>
-                            <td>{$row['numero']}</td>
-                            <td>
-                                <a href='edit_doctor.php?id={$row['id_doc']}' class='btn btn-warning btn-sm'>Modifier</a>
-                                <a href='delete_doctor.php?id={$row['id_doc']}' class='btn btn-danger btn-sm'>Supprimer</a>
-                            </td>
-                        </tr>";
-                        $index++; // Incrémentation de l'index
-                    }
-                    ?>
-                </tbody>
-            </table>
-        </div>
+    <h2>Médecins</h2>
+    <a href="add_doctor.php" class="btn btn-primary">Ajouter un Médecin</a>
+    <table class="table table-striped mt-3">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Hôpital</th>
+                <th>Spécialité</th>
+                <th>Téléphone</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            // Connexion à la base de données
+            $pdo = new PDO('mysql:host=localhost;dbname=soutenance1;charset=utf8', 'root', '');
+
+            // Récupération des médecins
+            $stmt = $pdo->query("
+                SELECT docteur.*, hopital.nom AS hospital_name, speciality.libelle AS speciality_name 
+                FROM docteur 
+                JOIN hopital ON docteur.id_hpt = hopital.id_hpt 
+                JOIN speciality ON docteur.id_sp = speciality.id_sp
+                
+            ");
+            $index = 1; // Initialisation de l'index pour la numérotation
+            while ($row = $stmt->fetch()) {
+                echo "<tr>
+                    <td>{$index}</td> <!-- Utilisation de l'index pour la numérotation -->
+                    <td>{$row['nom']}</td>
+                    <td>{$row['prenom']}</td>
+                    <td>{$row['hospital_name']}</td>
+                    <td>{$row['speciality_name']}</td>
+                    <td>{$row['numero']}</td>
+                    <td>
+                        <a href='edit_doctor.php?id={$row['id_doc']}' class='btn btn-warning btn-sm'>Modifier</a>
+                        <a href='delete_doctor.php?id={$row['id_doc']}' class='btn btn-danger btn-sm'>Supprimer</a>
+                    </td>
+                </tr>";
+                $index++; // Incrémentation de l'index
+            }
+            ?>
+        </tbody>
+    </table>
+</div>
+
 
         <div class="container">
             <h2>Patients</h2>

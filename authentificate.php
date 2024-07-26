@@ -15,17 +15,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Vérification des identifiants admin
     if ($username === $default_username_admin && $password === $default_password_admin) {
         $_SESSION['username'] = $username;
+        $_SESSION['role'] = 'admin'; // Ajoutez un rôle si nécessaire
         header('Location: dashbord.php');
         exit();
     }
     // Vérification des identifiants docteur
     elseif ($username === $default_username_doctor && $password === $default_password_doctor) {
         $_SESSION['username'] = $username;
-        header('Location: rendezvous.php');
+        $_SESSION['role'] = 'docteur'; // Ajoutez un rôle si nécessaire
+        header('Location: rendezvous_docteur.php');
         exit();
     } 
     else {
-        echo "Identifiants incorrects";
+        header('Location: index.php?error=1');
         exit();
     }
 } 

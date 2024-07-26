@@ -11,12 +11,12 @@ if ($conn->connect_error) {
 }
 
 // Vérifiez que le docteur est connecté
-if (!isset($_SESSION['docteur_id'])) {
-    header('Location: login.php');
+if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'docteur') {
+    header('Location: index.php');
     exit();
 }
 
-$docteur_id = $_SESSION['docteur_id'];
+$docteur_id = $_SESSION['username']; // Si vous utilisez le même nom d'utilisateur pour ID
 $sql = "SELECT rendezvous.*, patient.nom AS patient_nom, patient.prenom AS patient_prenom, patient.numero, patient.email 
         FROM rendezvous 
         JOIN patient ON rendezvous.id_pat = patient.id_pat 
@@ -26,7 +26,6 @@ $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $docteur_id);
 $stmt->execute();
 $result = $stmt->get_result();
-
 ?>
 
 <!DOCTYPE html>

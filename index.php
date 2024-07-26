@@ -11,8 +11,11 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f8f9fa;
+            background-image: url('doc1.jpg'); /* Remplacez 'path/to/your/image.jpg' par le chemin de votre image */
+            background-size: cover;
+            background-position: center;
             font-family: Arial, sans-serif;
+            margin: 0; /* Ajouté pour éviter les marges par défaut */
         }
         .login-container {
             background-color: #fff;
@@ -59,3 +62,8 @@
     </div>
 </body>
 </html>
+
+<?php if (isset($_GET['error']) && $_GET['error'] == 1): ?>
+    <p style="color: red;">Identifiants incorrects. Veuillez réessayer.</p>
+<?php endif; ?>
+

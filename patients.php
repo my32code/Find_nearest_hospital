@@ -14,7 +14,7 @@
             font-family: Arial, sans-serif;
         }
         .sidebar {
-            width: 250px;
+            width: 200px; /* Réduction de la taille de la barre latérale */
             background-color: #007bff;
             color: #fff;
             padding-top: 20px;
@@ -26,12 +26,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 15px;
+            padding: 10px; /* Réduction de la taille de padding */
             width: 100%;
             text-decoration: none;
             color: #fff;
             transition: background-color 0.3s, transform 0.3s;
-            margin: 10px 0;
+            margin: 5px 0; /* Réduction de l'espacement entre les éléments */
+            flex-direction: column; /* Alignement des icônes et du texte */
         }
         .sidebar a:hover {
             background-color: #0056b3;
@@ -40,6 +41,10 @@
         .sidebar a i {
             margin-right: 10px;
             font-size: 1.5em;
+        }
+        .sidebar .hopital-icon {
+            font-size: 3em; /* Augmentation de la taille de l'icône de l'utilisateur */
+            margin-bottom: 20px;
         }
         .content {
             flex-grow: 1;
@@ -54,7 +59,8 @@
 </head>
 <body>
     <div class="sidebar">
-        <a href="dashbord.php"><i class="fas fa-hospital"></i> Gestion des Hôpitaux</a>
+        <span><i class="fas fa-hospital hopital-icon"></i></span></a> <!-- Icône d'hopital agrandie -->
+        <a href="dashbord.php"><i class="fas fa-h-square"></i> Gestion des Hôpitaux</a>
         <a href="doctors.php"><i class="fas fa-user-md"></i> Médecins</a>
         <a href="patients.php"><i class="fas fa-procedures"></i> Patients</a>
         <a href="index.php"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
