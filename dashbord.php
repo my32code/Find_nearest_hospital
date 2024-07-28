@@ -1,3 +1,13 @@
+<?php
+session_start();
+
+// Vérifiez que l'utilisateur est connecté en tant qu'admin
+if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
+    header('Location: login_admin.php');
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -43,7 +53,7 @@
             font-size: 1.5em;
         }
         .sidebar .hopital-icon {
-            font-size: 3em; /* Augmentation de la taille de l'icône de l'utilisateur */
+            font-size: 5em; /* Augmentation de la taille de l'icône de l'utilisateur */
             margin-bottom: 20px;
         }
         .content {
@@ -66,6 +76,8 @@
         <a href="index.php"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
     </div>
     <div class="content">
+        <h1>Bienvenue, <?php echo htmlspecialchars($_SESSION['username']); ?></h1>
+        <p>Vous êtes connecté en tant qu'admin.</p>
         <div class="container">
             <h2>Gestion des Hôpitaux</h2>
             <a href="add_hospital.php" class="btn btn-primary">Ajouter un Hôpital</a>

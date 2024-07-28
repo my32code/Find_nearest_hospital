@@ -43,7 +43,7 @@
             font-size: 1.5em;
         }
         .sidebar .hopital-icon {
-            font-size: 3em; /* Augmentation de la taille de l'icône de l'utilisateur */
+            font-size: 5em; /* Augmentation de la taille de l'icône de l'utilisateur */
             margin-bottom: 20px;
         }
         .content {

@@ -41,7 +41,7 @@
 <body>
     <div class="login-container">
         <h2>Connexion</h2>
-        <form action="authentificate.php" method="post">
+        <form action="authentificate_admin.php" method="post">
             <div class="form-group">
                 <label for="email">Email :</label>
                 <input type="email" class="form-control" id="email" name="email" required>
@@ -52,7 +52,7 @@
             </div>
             <button type="submit" class="btn btn-primary">Se connecter</button>
             <?php
-            if (isset($_GET['error']) && $_GET['error'] == 1) {
+            if (isset($_GET['error'])) {
                 echo '<div class="alert alert-danger" role="alert">Identifiant ou mot de passe incorrect.</div>';
             }
             ?>
