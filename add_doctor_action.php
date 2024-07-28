@@ -6,8 +6,9 @@ $doctorFirstName = $_POST['doctorFirstName'];
 $hospital = $_POST['hospital'];
 $speciality = $_POST['speciality'];
 $phoneNumber = $_POST['phoneNumber'];
+$disponibility = $_POST['disponibility'];
 
-$stmt = $pdo->prepare("INSERT INTO docteur (nom, prenom, id_hpt, id_sp, numero) VALUES (?, ?, ?, ?, ?)");
-$stmt->execute([$doctorName, $doctorFirstName, $hospital, $speciality, $phoneNumber]);
+$stmt = $pdo->prepare("INSERT INTO docteur (nom, prenom, id_hpt, id_sp, numero,disponibility) VALUES (?, ?, ?, ?, ?, ?)");
+$stmt->execute([$doctorName, $doctorFirstName, $hospital, $speciality, $phoneNumber, $disponibility]);
 
 header('Location: dashbord.php');

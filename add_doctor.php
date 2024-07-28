@@ -45,6 +45,10 @@
                 <label for="phoneNumber">Téléphone</label>
                 <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" required>
             </div>
+            <div class="form-group">
+                <label for="phoneNumber">Disponibilité</label>
+                <input type="text" class="form-control" id="disponibility" name="disponibility" required>
+            </div>
             <button type="submit" class="btn btn-primary">Ajouter</button>
             <a href="dashbord.php" class="btn btn-secondary">Retour</a>
         </form>

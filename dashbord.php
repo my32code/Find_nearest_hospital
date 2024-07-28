@@ -72,7 +72,7 @@
             <table class="table table-striped mt-3">
                 <thead>
                     <tr>
-                        <th>#</th>
+                        <th></th>
                         <th>Nom</th>
                         <th>Latitude</th>
                         <th>Longitude</th>
@@ -118,12 +118,13 @@
     <table class="table table-striped mt-3">
         <thead>
             <tr>
-                <th>#</th>
+                <th></th>
                 <th>Nom</th>
                 <th>Prénom</th>
                 <th>Hôpital</th>
                 <th>Spécialité</th>
                 <th>Téléphone</th>
+                <th>Disponibilité</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -149,6 +150,7 @@
                     <td>{$row['hospital_name']}</td>
                     <td>{$row['speciality_name']}</td>
                     <td>{$row['numero']}</td>
+                    <td>{$row['disponibility']}</td>
                     <td>
                         <a href='edit_doctor.php?id={$row['id_doc']}' class='btn btn-warning btn-sm'>Modifier</a>
                         <a href='delete_doctor.php?id={$row['id_doc']}' class='btn btn-danger btn-sm'>Supprimer</a>
@@ -156,6 +158,7 @@
                 </tr>";
                 $index++; // Incrémentation de l'index
             }
+            
             ?>
         </tbody>
     </table>
@@ -167,7 +170,7 @@
             <table class="table table-striped mt-3">
                 <thead>
                     <tr>
-                        <th>#</th>
+                        <th></th>
                         <th>Nom</th>
                         <th>Prénom</th>
                         <th>Hôpital</th>

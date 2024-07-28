@@ -32,15 +32,27 @@
                     echo "<option value='".$row['id_ad']."'>".$row['ville'].", ".$row['commune'].", ".$row['arrondissement']."</option>";
                 }
                 ?>
+                 <option value="new"><a href="add_address.php">Nouvelle adresse</a></option>
                 </select>
             </div>
             <div class="form-group">
                 <label for="phoneNumber">Téléphone</label>
                 <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" required>
             </div>
+            <div class="form-group">
+                <label for="horaires">Horaires</label>
+                <input type="text" class="form-control" id="horaires" name="horaires" required>
+            </div>
             <button type="submit" class="btn btn-primary">Ajouter</button>
             <a href="dashbord.php" class="btn btn-secondary">Retour</a>
         </form>
     </div>
+    <script>
+        document.getElementById('address').addEventListener('change', function() {
+            if (this.value === 'new') {
+                window.location.href = 'add_address.php';
+            }
+        });
+    </script>
 </body>
 </html>

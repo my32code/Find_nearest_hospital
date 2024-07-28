@@ -11,14 +11,12 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-image: url('doc1.jpg'); /* Remplacez 'path/to/your/image.jpg' par le chemin de votre image */
+            background-image: url('doc1.jpg');
             background-size: cover;
-            background-position: center;
             font-family: Arial, sans-serif;
-            margin: 0; /* Ajouté pour éviter les marges par défaut */
         }
         .login-container {
-            background-color: #fff;
+            background-color: rgba(255, 255, 255, 0.9);
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
@@ -45,8 +43,8 @@
         <h2>Connexion</h2>
         <form action="authentificate.php" method="post">
             <div class="form-group">
-                <label for="username">Nom d'utilisateur :</label>
-                <input type="text" class="form-control" id="username" name="username" required>
+                <label for="email">Email :</label>
+                <input type="email" class="form-control" id="email" name="email" required>
             </div>
             <div class="form-group">
                 <label for="password">Mot de passe :</label>
@@ -54,7 +52,7 @@
             </div>
             <button type="submit" class="btn btn-primary">Se connecter</button>
             <?php
-            if (isset($_GET['error'])) {
+            if (isset($_GET['error']) && $_GET['error'] == 1) {
                 echo '<div class="alert alert-danger" role="alert">Identifiant ou mot de passe incorrect.</div>';
             }
             ?>
@@ -62,8 +60,3 @@
     </div>
 </body>
 </html>
-
-<?php if (isset($_GET['error']) && $_GET['error'] == 1): ?>
-    <p style="color: red;">Identifiants incorrects. Veuillez réessayer.</p>
-<?php endif; ?>
-

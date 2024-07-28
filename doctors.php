@@ -68,47 +68,54 @@
     <div class="content">
         <div class="container">
             <h2>Medecins</h2>
-            <table class="table table-striped mt-3">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Nom</th>
-                        <th>Prénom</th>
-                        <th>Hôpital</th>
-                        <th>Spécialité</th>
-                        <th>Téléphone</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    // Connexion à la base de données
-                    $pdo = new PDO('mysql:host=localhost;dbname=soutenance1;charset=utf8', 'root', '');
-                    
-                    // Récupération des médecins
-                    $stmt = $pdo->query("
-                        SELECT docteur.*, hopital.nom AS hospital_name, speciality.libelle AS speciality_name 
-                        FROM docteur 
-                        JOIN hopital ON docteur.id_hpt = hopital.id_hpt 
-                        JOIN speciality ON docteur.id_sp = speciality.id_sp
-                    ");
-                    while ($row = $stmt->fetch()) {
-                        echo "<tr>
-                            <td>{$row['id_doc']}</td>
-                            <td>{$row['nom']}</td>
-                            <td>{$row['prenom']}</td>
-                            <td>{$row['hospital_name']}</td>
-                            <td>{$row['speciality_name']}</td>
-                            <td>{$row['numero']}</td>
-                            <td>
-                                <a href='edit_doctor.php?id={$row['id_doc']}' class='btn btn-warning btn-sm'>Modifier</a>
-                                <a href='delete_doctor.php?id={$row['id_doc']}' class='btn btn-danger btn-sm'>Supprimer</a>
-                            </td>
-                        </tr>";
-                    }
-                    ?>
-                </tbody>
-            </table>
+            <a href="add_doctor.php" class="btn btn-primary">Ajouter un Médecin</a>
+    <table class="table table-striped mt-3">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Hôpital</th>
+                <th>Spécialité</th>
+                <th>Téléphone</th>
+                <th>Disponibilité</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            // Connexion à la base de données
+            $pdo = new PDO('mysql:host=localhost;dbname=soutenance1;charset=utf8', 'root', '');
+
+            // Récupération des médecins
+            $stmt = $pdo->query("
+                SELECT docteur.*, hopital.nom AS hospital_name, speciality.libelle AS speciality_name 
+                FROM docteur 
+                JOIN hopital ON docteur.id_hpt = hopital.id_hpt 
+                JOIN speciality ON docteur.id_sp = speciality.id_sp
+                
+            ");
+            $index = 1; // Initialisation de l'index pour la numérotation
+            while ($row = $stmt->fetch()) {
+                echo "<tr>
+                    <td>{$index}</td> <!-- Utilisation de l'index pour la numérotation -->
+                    <td>{$row['nom']}</td>
+                    <td>{$row['prenom']}</td>
+                    <td>{$row['hospital_name']}</td>
+                    <td>{$row['speciality_name']}</td>
+                    <td>{$row['numero']}</td>
+                    <td>{$row['disponibility']}</td>
+                    <td>
+                        <a href='edit_doctor.php?id={$row['id_doc']}' class='btn btn-warning btn-sm'>Modifier</a>
+                        <a href='delete_doctor.php?id={$row['id_doc']}' class='btn btn-danger btn-sm'>Supprimer</a>
+                    </td>
+                </tr>";
+                $index++; // Incrémentation de l'index
+            }
+            
+            ?>
+        </tbody>
+    </table>
         </div>  
     </div>
 
