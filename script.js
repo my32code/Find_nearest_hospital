@@ -1,13 +1,12 @@
 // Liste des hôpitaux par ville avec leurs coordonnées GPS
-const hospitals = {
-    { name: "Hôpital Saint et Sauf"; lat: 6.37747; lng: 2.38244 };
-    { name: "Hôpital de Cotonou"; lat: 6.37954; lng: 2.37963 };
-    { name: "Hôpital de Parakou"; lat: 9.33474; lng: 2.6345 };
-    { name: "Hôpital de calavi"; lat: 6.43604; lng: 2.33921 };
-    { name: "DON DE DIEU"; lat: 6.51185; lng: 2.36291 };
-    
+const hospitals = [
+    { name: "Hôpital Saint et Sauf", lat: 6.37747, lng: 2.38244 },
+    { name: "Hôpital de Cotonou", lat: 6.37954, lng: 2.37963 },
+    { name: "Hôpital de Parakou", lat: 9.33474, lng: 2.6345 },
+    { name: "Hôpital de calavi", lat: 6.43604, lng: 2.33921 },
+    { name: "DON DE DIEU", lat: 6.51185, lng: 2.36291 },
     // Ajouter d'autres villes et hôpitaux ici
-};
+];
 
 // Fonction pour obtenir la position de l'utilisateur
 function getLocation() {
