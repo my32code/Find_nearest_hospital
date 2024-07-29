@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'];
 
     // Remplacez ces valeurs par les véritables identifiants de l'admin
-    $admin_email = "admin@example.com";
+    $admin_email = "admin@gmail.com";
     $admin_password = "Soutenance1234";
 
     if ($email === $admin_email && $password === $admin_password) {

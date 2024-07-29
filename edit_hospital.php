@@ -49,6 +49,10 @@
                 <label for="phoneNumber">Téléphone</label>
                 <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" value="<?php echo $hospital['numero']; ?>" required>
             </div>
+            <div class="form-group">
+                <label for="horaire">Horaires</label>
+                <input type="text" class="form-control" id="horaire" name="horaire" value="<?php echo $hospital['horaire']; ?>" required>
+            </div>
             <button type="submit" class="btn btn-primary">Enregistrer</button>
             <a href="dashbord.php" class="btn btn-secondary">Retour</a>
         </form>

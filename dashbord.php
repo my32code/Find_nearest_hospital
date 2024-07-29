@@ -185,7 +185,6 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
                         <th></th>
                         <th>Nom</th>
                         <th>Prénom</th>
-                        <th>Hôpital</th>
                         <th>Téléphone</th>
                         <th>Email</th>
                         <th>Actions</th>
@@ -198,9 +197,8 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
                     
                     // Récupération des patients
                     $stmt = $pdo->query("
-                        SELECT patient.*, hopital.nom AS hospital_name 
-                        FROM patient 
-                        JOIN hopital ON patient.id_hpt = hopital.id_hpt
+                         SELECT patient.*
+                        FROM patient
                     ");
                     $index = 1; // Initialisation de l'index pour la numérotation
                     while ($row = $stmt->fetch()) {
@@ -208,7 +206,6 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
                             <td>{$index}</td> <!-- Utilisation de l'index pour la numérotation -->
                             <td>{$row['nom']}</td>
                             <td>{$row['prenom']}</td>
-                            <td>{$row['hospital_name']}</td>
                             <td>{$row['numero']}</td>
                             <td>{$row['email']}</td>
                             <td>

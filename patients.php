@@ -74,7 +74,6 @@
                         <th></th>
                         <th>Nom</th>
                         <th>Prénom</th>
-                        <th>Hôpital</th>
                         <th>Téléphone</th>
                         <th>Email</th>
                         <th>Actions</th>
@@ -87,16 +86,15 @@
                     
                     // Récupération des patients
                     $stmt = $pdo->query("
-                        SELECT patient.*, hopital.nom AS hospital_name 
+                        SELECT patient.*
                         FROM patient 
-                        JOIN hopital ON patient.id_hpt = hopital.id_hpt
+                        
                     ");
                     while ($row = $stmt->fetch()) {
                         echo "<tr>
                             <td>{$row['id_pat']}</td>
                             <td>{$row['nom']}</td>
                             <td>{$row['prenom']}</td>
-                            <td>{$row['hospital_name']}</td>
                             <td>{$row['numero']}</td>
                             <td>{$row['email']}</td>
                             <td>

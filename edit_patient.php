@@ -29,18 +29,7 @@
                 <label for="patientFirstName">Prénom</label>
                 <input type="text" class="form-control" id="patientFirstName" name="patientFirstName" value="<?php echo $patient['prenom']; ?>" required>
             </div>
-            <div class="form-group">
-                <label for="hospital">Hôpital</label>
-                <select name="hospital" id="hospital" class="form-control" required>
-                <?php
-                $stmt = $pdo->query("SELECT * FROM hopital");
-                while ($row = $stmt->fetch()) {
-                    $selected = ($row['id_hpt'] == $patient['id_hpt']) ? 'selected' : '';
-                    echo "<option value='".$row['id_hpt']."' $selected>".$row['nom']."</option>";
-                }
-                ?>
-                </select>
-            </div>
+            
             <div class="form-group">
                 <label for="phoneNumber">Téléphone</label>
                 <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" value="<?php echo $patient['numero']; ?>" required>

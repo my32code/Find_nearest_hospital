@@ -7,8 +7,9 @@ $latitude = $_POST['latitude'];
 $longitude = $_POST['longitude'];
 $address = $_POST['address'];
 $phoneNumber = $_POST['phoneNumber'];
+$horaire= $_POST['horaire'];
 
-$stmt = $pdo->prepare("UPDATE hopital SET nom = ?, latitude = ?, longitude = ?, id_ad = ?, numero = ? WHERE id_hpt = ?");
-$stmt->execute([$hospitalName, $latitude, $longitude, $address, $phoneNumber, $id]);
+$stmt = $pdo->prepare("UPDATE hopital SET nom = ?, latitude = ?, longitude = ?, id_ad = ?, numero = ?, horaire = ? WHERE id_hpt = ?");
+$stmt->execute([$hospitalName, $latitude, $longitude, $address, $phoneNumber, $id, $horaire]);
 
 header('Location: dashbord.php');

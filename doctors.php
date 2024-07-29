@@ -89,11 +89,7 @@
 
             // Récupération des médecins
             $stmt = $pdo->query("
-                SELECT docteur.*, hopital.nom AS hospital_name, speciality.libelle AS speciality_name 
-                FROM docteur 
-                JOIN hopital ON docteur.id_hpt = hopital.id_hpt 
-                JOIN speciality ON docteur.id_sp = speciality.id_sp
-                
+                select * from patient
             ");
             $index = 1; // Initialisation de l'index pour la numérotation
             while ($row = $stmt->fetch()) {

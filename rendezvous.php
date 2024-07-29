@@ -91,7 +91,7 @@
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         // Récupération des disponibilités des docteurs
-        $stmt = $pdo->query("SELECT id_doc, disponibilite FROM docteur");
+        $stmt = $pdo->query("SELECT id_doc, disponibility FROM docteur");
         $disponibilites = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         // Génération des options pour le select
