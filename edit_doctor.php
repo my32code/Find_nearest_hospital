@@ -30,6 +30,10 @@
                 <input type="text" class="form-control" id="doctorFirstName" name="doctorFirstName" value="<?php echo $doctor['prenom']; ?>" required>
             </div>
             <div class="form-group">
+                <label for="sexe">Sexe</label>
+                <input type="text" class="form-control" id="sexe" name="sexe" value="<?php echo $doctor['sexe']; ?>" required>
+            </div>
+            <div class="form-group">
                 <label for="hospital">Hôpital</label>
                 <select name="hospital" id="hospital" class="form-control" required>
                 <?php

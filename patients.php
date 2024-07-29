@@ -61,7 +61,7 @@
     <div class="sidebar">
         <span><i class="fas fa-hospital hopital-icon"></i></span></a> <!-- Icône d'hopital agrandie -->
         <a href="dashbord.php"><i class="fas fa-h-square"></i> Gestion des Hôpitaux</a>
-        <a href="doctors.php"><i class="fas fa-user-md"></i> Médecins</a>
+        <a href="doctors.php"><i class="fas fa-user-md"></i> Docteurs</a>
         <a href="patients.php"><i class="fas fa-procedures"></i> Patients</a>
         <a href="index.php"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
     </div>
@@ -74,6 +74,7 @@
                         <th></th>
                         <th>Nom</th>
                         <th>Prénom</th>
+                        <th>Sexe</th>
                         <th>Téléphone</th>
                         <th>Email</th>
                         <th>Actions</th>
@@ -95,6 +96,7 @@
                             <td>{$row['id_pat']}</td>
                             <td>{$row['nom']}</td>
                             <td>{$row['prenom']}</td>
+                            <td>{$row['sexe']}</td>
                             <td>{$row['numero']}</td>
                             <td>{$row['email']}</td>
                             <td>

@@ -71,7 +71,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
     <div class="sidebar">
         <span><i class="fas fa-hospital hopital-icon"></i></span></a> <!-- Icône d'hopital agrandie -->
         <a href="dashbord.php"><i class="fas fa-h-square"></i> Gestion des Hôpitaux</a>
-        <a href="doctors.php"><i class="fas fa-user-md"></i> Médecins</a>
+        <a href="doctors.php"><i class="fas fa-user-md"></i> Docteurs</a>
         <a href="patients.php"><i class="fas fa-procedures"></i> Patients</a>
         <a href="index.php"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
     </div>
@@ -125,14 +125,15 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
         </div>
 
         <div class="container">
-    <h2>Médecins</h2>
-    <a href="add_doctor.php" class="btn btn-primary">Ajouter un Médecin</a>
+    <h2>Docteurs</h2>
+    <a href="add_doctor.php" class="btn btn-primary">Ajouter un Docteur</a>
     <table class="table table-striped mt-3">
         <thead>
             <tr>
                 <th></th>
                 <th>Nom</th>
                 <th>Prénom</th>
+                <th>Sexe</th>
                 <th>Hôpital</th>
                 <th>Spécialité</th>
                 <th>Téléphone</th>
@@ -159,6 +160,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
                     <td>{$index}</td> <!-- Utilisation de l'index pour la numérotation -->
                     <td>{$row['nom']}</td>
                     <td>{$row['prenom']}</td>
+                    <td>{$row['sexe']}</td>
                     <td>{$row['hospital_name']}</td>
                     <td>{$row['speciality_name']}</td>
                     <td>{$row['numero']}</td>
@@ -185,6 +187,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
                         <th></th>
                         <th>Nom</th>
                         <th>Prénom</th>
+                        <th>Sexe</th>
                         <th>Téléphone</th>
                         <th>Email</th>
                         <th>Actions</th>
@@ -206,6 +209,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
                             <td>{$index}</td> <!-- Utilisation de l'index pour la numérotation -->
                             <td>{$row['nom']}</td>
                             <td>{$row['prenom']}</td>
+                            <td>{$row['sexe']}</td>
                             <td>{$row['numero']}</td>
                             <td>{$row['email']}</td>
                             <td>

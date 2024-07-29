@@ -61,20 +61,21 @@
     <div class="sidebar">
         <span><i class="fas fa-hospital hopital-icon"></i></span></a> <!-- Icône d'hopital agrandie -->
         <a href="dashbord.php"><i class="fas fa-h-square"></i> Gestion des Hôpitaux</a>
-        <a href="doctors.php"><i class="fas fa-user-md"></i> Médecins</a>
+        <a href="doctors.php"><i class="fas fa-user-md"></i> Docteurs</a>
         <a href="patients.php"><i class="fas fa-procedures"></i> Patients</a>
         <a href="index.php"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
     </div>
     <div class="content">
         <div class="container">
-            <h2>Medecins</h2>
-            <a href="add_doctor.php" class="btn btn-primary">Ajouter un Médecin</a>
+            <h2>Docteurs</h2>
+            <a href="add_doctor.php" class="btn btn-primary">Ajouter un Docteur</a>
     <table class="table table-striped mt-3">
         <thead>
             <tr>
                 <th></th>
                 <th>Nom</th>
                 <th>Prénom</th>
+                <th>Sexe</th>
                 <th>Hôpital</th>
                 <th>Spécialité</th>
                 <th>Téléphone</th>
@@ -89,7 +90,11 @@
 
             // Récupération des médecins
             $stmt = $pdo->query("
-                select * from patient
+                SELECT docteur.*, hopital.nom AS hospital_name, speciality.libelle AS speciality_name 
+                FROM docteur 
+                JOIN hopital ON docteur.id_hpt = hopital.id_hpt 
+                JOIN speciality ON docteur.id_sp = speciality.id_sp
+                
             ");
             $index = 1; // Initialisation de l'index pour la numérotation
             while ($row = $stmt->fetch()) {
@@ -97,6 +102,7 @@
                     <td>{$index}</td> <!-- Utilisation de l'index pour la numérotation -->
                     <td>{$row['nom']}</td>
                     <td>{$row['prenom']}</td>
+                    <td>{$row['sexe']}</td>
                     <td>{$row['hospital_name']}</td>
                     <td>{$row['speciality_name']}</td>
                     <td>{$row['numero']}</td>

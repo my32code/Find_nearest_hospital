@@ -24,6 +24,7 @@
             <p>Êtes-vous sûr de vouloir supprimer le patient suivant ?</p>
             <p><strong>Nom :</strong> <?php echo $patient['nom']; ?></p>
             <p><strong>Prénom :</strong> <?php echo $patient['prenom']; ?></p>
+            <p><strong>Sexe :</strong> <?php echo $patient['sexe']; ?></p>
             <p><strong>Hôpital :</strong> <?php echo $patient['id_hpt']; ?></p>
             <p><strong>Téléphone :</strong> <?php echo $patient['numero']; ?></p>
             <p><strong>Email :</strong> <?php echo $patient['email']; ?></p>

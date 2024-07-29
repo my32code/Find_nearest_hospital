@@ -23,7 +23,7 @@
             <input type="hidden" name="id" value="<?php echo $hospital['id_hpt']; ?>">
             <p>Êtes-vous sûr de vouloir supprimer l'hôpital suivant ?</p>
             <p><strong>Nom :</strong> <?php echo $hospital['nom']; ?></p>
-            <p><strong>Adresse :</strong> <?php echo $hospital['latitude'] . ", " . $hospital['longitude']; ?></p>
+            <p><strong>Coordonnées :</strong> <?php echo $hospital['latitude'] . ", " . $hospital['longitude']; ?></p>
             <button type="submit" class="btn btn-danger">Supprimer</button>
             <a href="dashbord.php" class="btn btn-secondary">Annuler</a>
         </form>

@@ -29,6 +29,10 @@
                 <label for="patientFirstName">Prénom</label>
                 <input type="text" class="form-control" id="patientFirstName" name="patientFirstName" value="<?php echo $patient['prenom']; ?>" required>
             </div>
+            <div class="form-group">
+                <label for="sexe">Sexe</label>
+                <input type="text" class="form-control" id="sexe" name="sexe" value="<?php echo $patient['sexe']; ?>" required>
+            </div>
             
             <div class="form-group">
                 <label for="phoneNumber">Téléphone</label>

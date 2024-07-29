@@ -1,24 +1,11 @@
 // Liste des hôpitaux par ville avec leurs coordonnées GPS
 const hospitals = {
-    "Cotonou": [
-        { name: "Hôpital de la Mère et de l'Enfant", lat: 6.3716, lng: 2.4256 },
-        { name: "Centre National Hospitalier et Universitaire Hubert Koutoukou Maga", lat: 6.3647, lng: 2.4195 }
-    ],
-    "Porto-Novo": [
-        { name: "Centre Hospitalier Départemental de l'Ouémé-Plateau", lat: 6.4976, lng: 2.6169 },
-        { name: "Hôpital St Joseph de Porto-Novo", lat: 6.4979, lng: 2.6166 }
-    ],
-    "Calavi": [
-        { name: "Hôpital de Zone d'Abomey-Calavi", lat: 6.477253074767697, lng: 2.342983684947536 },
-        { name: "Clinique Centrale de Calavi", lat: 6.436827409254074, lng: 2.3491634945873496 },
-        { name: "La Polyclinique Cooperative de Calavi", lat: 6.461049081798427, lng: 2.3556866269849346 },
-        { name: "Centre de Santé Calavi Kpota", lat: 6.452861603698625, lng: 2.353626690438329 },
-        { name: "Clinique Divine Miséricorde", lat: 6.441433027620622, lng: 2.34555860563079 },
-        { name: "Centre Hospitalier International de Calavi", lat: 6.476400245992095, lng: 2.341267071158695 },
-        { name: "Clinique HOREB", lat: 6.438874355908541, lng: 2.3390354732332055 },
-        { name: "Hôpital de Zone Abomey-Calavi-So Ava", lat: 6.454567339220798, lng: 2.3460735897674416 },
-        { name: "Centre Médical Bonne Santé", lat: 6.433245232757827, lng: 2.323929271891431 }
-    ]
+    { name: "Hôpital Saint et Sauf"; lat: 6.37747; lng: 2.38244 };
+    { name: "Hôpital de Cotonou"; lat: 6.37954; lng: 2.37963 };
+    { name: "Hôpital de Parakou"; lat: 9.33474; lng: 2.6345 };
+    { name: "Hôpital de calavi"; lat: 6.43604; lng: 2.33921 };
+    { name: "DON DE DIEU"; lat: 6.51185; lng: 2.36291 };
+    
     // Ajouter d'autres villes et hôpitaux ici
 };
 
@@ -55,10 +42,10 @@ function showPosition(position) {
     let hospitalsDiv = document.getElementById("hospitals");
     hospitalsDiv.innerHTML = '<h2>Hôpitaux les plus proches</h2>';
     nearestHospitals.forEach(hospital => {
-        const link = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(hospital.name)}`;
-        hospitalsDiv.innerHTML += `<p><a href="${link}" target="_blank">${hospital.name}</a> - Distance: ${hospital.distance.toFixed(2)} km</p>`;
-    });
-}
+        const link = `https://www.google.com/maps/search/?api=1&query=${hospital.lat},${hospital.lng}`;        
+        hospitalsDiv.innerHTML += `<p><a href="${link}" target="_blank">${hospital.name}</a> - Distance: ${hospital.distance.toFixed(2)} km</p>`;    
+    });}
+    
 
 // Fonction pour calculer la distance entre deux points (coordonnées en degrés)
 function calculateDistance(lat1, lng1, lat2, lng2) {
