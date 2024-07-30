@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="container">
-        <h2>Modifier un Médecin</h2>
+        <h2>Modifier un Docteur</h2>
         <?php
         // Connexion à la base de données
         $pdo = new PDO('mysql:host=localhost;dbname=soutenance1;charset=utf8', 'root', '');

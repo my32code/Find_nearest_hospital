@@ -3,7 +3,7 @@ session_start();
 
 // Vérifiez que l'utilisateur est connecté en tant qu'admin
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
-    header('Location: login_admin.php');
+    header('Location: index.php');
     exit();
 }
 ?>

@@ -11,7 +11,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-image: url('doc1.jpg');
+            background-image: url('DOC2.jpg');
             background-size: cover;
             font-family: Arial, sans-serif;
         }
