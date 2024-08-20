@@ -18,6 +18,7 @@
         $stmt = $pdo->prepare("SELECT * FROM docteur WHERE id_doc = ?");
         $stmt->execute([$id]);
         $doctor = $stmt->fetch();
+        $disponibilities = json_decode($doctor['disponibility'], true);
         ?>
         <form action="edit_doctor_action.php" method="post">
             <input type="hidden" name="id" value="<?php echo $doctor['id_doc']; ?>">
@@ -63,11 +64,44 @@
             </div>
             <div class="form-group">
                 <label for="disponibility">Disponibilité</label>
-                <input type="text" class="form-control" id="disponibility" name="disponibility" value="<?php echo $doctor['disponibility']; ?>" required>
+                <div id="disponibility-container">
+                    <?php foreach ($disponibilities as $disponibility) { ?>
+                    <div class="input-group mb-3">
+                        <input type="datetime-local" class="form-control" name="start_time[]" value="<?php echo str_replace(' ', 'T', $disponibility['start_time']); ?>" required>
+                        <input type="datetime-local" class="form-control" name="end_time[]" value="<?php echo str_replace(' ', 'T', $disponibility['end_time']); ?>" required>
+                        <div class="input-group-append">
+                            <button class="btn btn-danger remove-time-slot" type="button">Retirer</button>
+                        </div>
+                    </div>
+                    <?php } ?>
+                </div>
+                <button class="btn btn-success" id="add-time-slot" type="button">Ajouter une plage horaire</button>
             </div>
             <button type="submit" class="btn btn-primary">Enregistrer</button>
             <a href="dashbord.php" class="btn btn-secondary">Retour</a>
         </form>
     </div>
+
+    <script>
+        document.getElementById('add-time-slot').addEventListener('click', function() {
+            var container = document.getElementById('disponibility-container');
+            var timeSlot = document.createElement('div');
+            timeSlot.className = 'input-group mb-3';
+            timeSlot.innerHTML = `
+                <input type="datetime-local" class="form-control" name="start_time[]" required>
+                <input type="datetime-local" class="form-control" name="end_time[]" required>
+                <div class="input-group-append">
+                    <button class="btn btn-danger remove-time-slot" type="button">Retirer</button>
+                </div>
+            `;
+            container.appendChild(timeSlot);
+        });
+
+        document.getElementById('disponibility-container').addEventListener('click', function(e) {
+            if (e.target && e.target.classList.contains('remove-time-slot')) {
+                e.target.closest('.input-group').remove();
+            }
+        });
+    </script>
 </body>
 </html>

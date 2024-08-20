@@ -1,70 +1,58 @@
 <?php
-    session_start();
+session_start();
 
-    // Vérifiez que l'utilisateur est connecté en tant que patient
-    if (!isset($_SESSION['user_id'], $_SESSION['username']) || $_SESSION['role'] !== 'patient') {
-        header('Location: login_patient.php');
+// Vérifiez que l'utilisateur est connecté en tant que patient
+if (!isset($_SESSION['user_id'], $_SESSION['username']) || $_SESSION['role'] !== 'patient') {
+    error_log("User not logged in or not a patient.");
+    header('Location: login_patient.php');
+    exit();
+}
+
+if (!isset($_POST['doctorId']) || !isset($_POST['hopitalId']) || !isset($_POST['date_heure_rendezvous']) || !isset($_POST['description'])) {
+    error_log("Doctor ID, hospital ID, date or description not specified.");
+    echo "ID du docteur, ID de l'hôpital, date ou description non spécifiés.";
+    exit();
+}
+
+$doctorId = $_POST['doctorId'];
+$hopitalId = $_POST['hopitalId'];
+$dateHeureRendezvous = $_POST['date_heure_rendezvous'];
+$description = $_POST['description'];
+error_log("Doctor ID: $doctorId, Hospital ID: $hopitalId, Date/Heure: $dateHeureRendezvous, Description: $description");
+
+// Connexion à la base de données
+try {
+    $pdo = new PDO('mysql:host=localhost;dbname=soutenance1;charset=utf8', 'root', '');
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    // Récupération des informations du docteur
+    $stmt = $pdo->prepare("SELECT id_doc, nom, prenom, disponibility FROM docteur WHERE id_doc = :doctorId");
+    $stmt->execute(['doctorId' => $doctorId]);
+    $docteur = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$docteur) {
+        error_log("Doctor not found.");
+        echo "Docteur non trouvé.";
         exit();
     }
 
-    if (!isset($_GET['doctorId']) || !isset($_GET['hopitalId'])) {
-        echo "ID du docteur ou de l'hôpital non spécifié.";
+    // Récupération des informations du patient
+    $stmt = $pdo->prepare("SELECT nom, prenom, numero, email FROM patient WHERE id_pat = :userId");
+    $stmt->execute(['userId' => $_SESSION['user_id']]);
+    $patient = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$patient) {
+        error_log("Patient not found.");
+        echo "Patient non trouvé.";
         exit();
     }
 
-    $doctorId = $_GET['doctorId'];
-    $hopitalId = $_GET['hopitalId'];
+} catch (PDOException $e) {
+    error_log("Database error: " . $e->getMessage());
+    echo "Erreur : " . $e->getMessage();
+}
 
-    // Connexion à la base de données
-    try {
-        $pdo = new PDO('mysql:host=localhost;dbname=soutenance1;charset=utf8', 'root', '');
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        // Récupération des informations du docteur
-        $stmt = $pdo->prepare("SELECT id_doc, nom, prenom, disponibility FROM docteur WHERE id_doc = :doctorId");
-        $stmt->execute(['doctorId' => $doctorId]);
-        $docteur = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if (!$docteur) {
-            echo "Docteur non trouvé.";
-            exit();
-        }
-
-        // Récupération des informations du patient
-        $stmt = $pdo->prepare("SELECT nom, prenom, numero, email FROM patient WHERE id_pat = :userId");
-        $stmt->execute(['userId' => $_SESSION['user_id']]);
-        $patient = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if (!$patient) {
-            echo "Patient non trouvé.";
-            exit();
-        }
-
-        // Récupérer les informations du docteur
-        $stmt = $pdo->prepare("SELECT nom, prenom, disponibility FROM docteur WHERE id_doc = :doctorId");
-        $stmt->execute(['doctorId' => $doctorId]);
-        $doctor = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        // Récupérer les disponibilités du docteur
-        $disponibilities = json_decode($docteur['disponibility'], true);
-
-        } catch (PDOException $e) {
-            echo "Erreur : " . $e->getMessage();
-        }
-        
-
-        function parseDisponibilities($disponibilities) {
-        $result = [];
-        foreach ($disponibilities as $dispo) {
-            $result[] = [
-                'start' => $dispo['start_time'],
-                'end' => $dispo['end_time']
-            ];
-        }
-        return $result;
-    }
-
-    $parsedDisponibilities = parseDisponibilities($disponibilities);
+$montant = 2000;
 ?>
 
 <!DOCTYPE html>
@@ -205,11 +193,11 @@
             color: green;
         }
     </style>
-    <title>Demander un rendez-vous</title>
+    <title>Paiement</title>
 </head>
 <body>
-    <h1>Demander un rendez-vous</h1>
-    <form class="form-section" id="rendezvousForm" method="POST" action="paiement.php">
+<h1>Confirmez vos informations</h1>
+    <form class="form-section" id="rendezvousForm" method="POST" action="rendezvous_handler.php">
         <div class="form-line">
             <label class="form-label" for="nom_pat">Nom</label>
             <div class="form-input">
@@ -238,24 +226,40 @@
         <div class="form-line">
             <label class="form-label" for="date_heure_rendezvous">Date et Heure du Rendez-vous</label>
             <div class="form-input">
-                <input type="datetime-local" id="date_heure_rendezvous" name="date_heure_rendezvous" required>
+                <input type="datetime-local" id="date_heure_rendezvous" name="date_heure_rendezvous" value="<?= htmlspecialchars($dateHeureRendezvous) ?>" required>
             </div>
         </div>
         <div class="form-line">
             <label class="form-label" for="description">Description</label>
             <div class="form-input">
-                <textarea id="description" name="description" class="form-textbox" rows="4" placeholder="Description du rendez-vous" required></textarea>
+                <textarea id="description" name="description" class="form-textbox" rows="4" required><?= htmlspecialchars($description) ?></textarea>
             </div>
         </div>
+        <div class="form-line">
+            <label class="form-label" for="montant">Montant</label>
+            <div class="form-input">
+                <input type="number" id="montant" name="montant" class="form-textbox" value="<?= $montant; ?>" readonly required>
+            </div>
+        </div>
+        
+        <div style="margin-left:300px;" id="kkiapay-container"></div>
+        <script src="https://cdn.kkiapay.me/k.js"></script>
+        <script>    
+            document.addEventListener('DOMContentLoaded', function () {        
+                var montant = <?= json_encode($montant); ?>;  
+                var widgetContainer = document.getElementById('kkiapay-container');        
+                var widget = document.createElement('kkiapay-widget');     
+                widget.setAttribute('amount', montant);        
+                widget.setAttribute('key', '4b6b817058e011ef93c41158b337c382');
+                widget.setAttribute('sandbox', 'true');  // Activer le mode Sandbox
+                widgetContainer.appendChild(widget); // Ajout du widget dans le DOM
+            });
+        </script>
 
         <input type="hidden" name="doctorId" value="<?= htmlspecialchars($doctorId) ?>">
         <input type="hidden" name="hopitalId" value="<?= htmlspecialchars($hopitalId) ?>">
         
         <div class="form-line">
-            <button type="submit" id="submitBtn" class="form-submit">Soumettre</button>
+            <button type="submit" id="submitBtn" class="form-submit">Valider</button>
         </div>
     </form>
-
-    
-</body>
-</html>

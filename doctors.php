@@ -60,7 +60,8 @@
 <body>
     <div class="sidebar">
         <span><i class="fas fa-hospital hopital-icon"></i></span></a> <!-- Icône d'hopital agrandie -->
-        <a href="dashbord.php"><i class="fas fa-h-square"></i> Gestion des Hôpitaux</a>
+        <a href="dashbord.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a href="hopitaux.php"><i class="fas fa-h-square"></i> Gestion des Hôpitaux</a>
         <a href="doctors.php"><i class="fas fa-user-md"></i> Docteurs</a>
         <a href="patients.php"><i class="fas fa-procedures"></i> Patients</a>
         <a href="index.php"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
@@ -97,8 +98,37 @@
                 
             ");
             $index = 1; // Initialisation de l'index pour la numérotation
-            while ($row = $stmt->fetch()) {
-                echo "<tr>
+          
+                while ($row = $stmt->fetch()) {
+                    // Décoder la disponibilité
+                    $disponibility = json_decode($row['disponibility'], true);
+                    $availability = [];
+
+                    if (json_last_error() === JSON_ERROR_NONE) {
+                        foreach ($disponibility as $dispo) {
+                            if (isset($dispo['start_time']) && isset($dispo['end_time'])) {
+                                $startDay = strftime('%A', strtotime($dispo['start_time'])); // Jour en français
+                                $startTime = date('H:i', strtotime($dispo['start_time'])); // Heure de début
+                                $endTime = date('H:i', strtotime($dispo['end_time'])); // Heure de fin
+
+                                // Ajouter la disponibilité au tableau
+                                if (!isset($availability[$startDay])) {
+                                    $availability[$startDay] = [];
+                                }
+                                $availability[$startDay][] = "$startTime - $endTime";
+                            }
+                        }
+                    } else {
+                        // Afficher une erreur si le JSON est mal formé
+                        $availability = "Erreur de décodage JSON : " . json_last_error_msg();
+                    }
+
+                    // Formater la disponibilité pour l'affichage
+                    $availabilityStr = '';
+                    foreach ($availability as $day => $times) {
+                        $availabilityStr .= $day . ': ' . implode(', ', $times) . '<br>';
+                    }
+                    echo "<tr>
                     <td>{$index}</td> <!-- Utilisation de l'index pour la numérotation -->
                     <td>{$row['nom']}</td>
                     <td>{$row['prenom']}</td>
@@ -106,14 +136,14 @@
                     <td>{$row['hospital_name']}</td>
                     <td>{$row['speciality_name']}</td>
                     <td>{$row['numero']}</td>
-                    <td>{$row['disponibility']}</td>
+                    <td>{$availabilityStr}</td>
                     <td>
                         <a href='edit_doctor.php?id={$row['id_doc']}' class='btn btn-warning btn-sm'>Modifier</a>
                         <a href='delete_doctor.php?id={$row['id_doc']}' class='btn btn-danger btn-sm'>Supprimer</a>
                     </td>
                 </tr>";
                 $index++; // Incrémentation de l'index
-            }
+                }
             
             ?>
         </tbody>

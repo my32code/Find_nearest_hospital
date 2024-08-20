@@ -46,12 +46,43 @@
                 <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" required>
             </div>
             <div class="form-group">
-                <label for="phoneNumber">Disponibilité</label>
-                <input type="text" class="form-control" id="disponibility" name="disponibility" required>
+                <label for="disponibility">Disponibilité</label>
+                <div id="disponibility-container">
+                    <div class="input-group mb-3">
+                        <input type="datetime-local" class="form-control" name="start_time[]" required>
+                        <input type="datetime-local" class="form-control" name="end_time[]" required>
+                        <div class="input-group-append">
+                            <button class="btn btn-danger remove-time-slot" type="button">Retirer</button>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-success" id="add-time-slot" type="button">Ajouter une plage horaire</button>
             </div>
             <button type="submit" class="btn btn-primary">Ajouter</button>
             <a href="dashbord.php" class="btn btn-secondary">Retour</a>
         </form>
     </div>
+
+    <script>
+        document.getElementById('add-time-slot').addEventListener('click', function() {
+            var container = document.getElementById('disponibility-container');
+            var timeSlot = document.createElement('div');
+            timeSlot.className = 'input-group mb-3';
+            timeSlot.innerHTML = `
+                <input type="datetime-local" class="form-control" name="start_time[]" required>
+                <input type="datetime-local" class="form-control" name="end_time[]" required>
+                <div class="input-group-append">
+                    <button class="btn btn-danger remove-time-slot" type="button">Retirer</button>
+                </div>
+            `;
+            container.appendChild(timeSlot);
+        });
+
+        document.getElementById('disponibility-container').addEventListener('click', function(e) {
+            if (e.target && e.target.classList.contains('remove-time-slot')) {
+                e.target.closest('.input-group').remove();
+            }
+        });
+    </script>
 </body>
 </html>

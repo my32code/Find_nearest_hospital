@@ -6,6 +6,21 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
     header('Location: index.php');
     exit();
 }
+
+// Connexion à la base de données
+$pdo = new PDO('mysql:host=localhost;dbname=soutenance1;charset=utf8', 'root', '');
+
+// Récupération du nombre d'hôpitaux
+$stmt = $pdo->query("SELECT COUNT(*) AS count FROM hopital");
+$hospitalCount = $stmt->fetch()['count'];
+
+// Récupération du nombre de docteurs
+$stmt = $pdo->query("SELECT COUNT(*) AS count FROM docteur");
+$doctorCount = $stmt->fetch()['count'];
+
+// Récupération du nombre de patients
+$stmt = $pdo->query("SELECT COUNT(*) AS count FROM patient");
+$patientCount = $stmt->fetch()['count'];
 ?>
 
 <!DOCTYPE html>
@@ -65,12 +80,49 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
         .container {
             margin-top: 20px;
         }
+        .card {
+            margin-bottom: 20px;
+        }
+        .card-icon {
+            font-size: 4em;
+            margin-right: 15px;
+        }
+        .card-title {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        .stat-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .stat-card h3 {
+            margin-top: 0;
+            font-size: 2em;
+        }
+        .chart-container {
+            margin-top: 30px;
+        }
+        .chart-wrapper {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="sidebar">
-        <span><i class="fas fa-hospital hopital-icon"></i></span></a> <!-- Icône d'hopital agrandie -->
-        <a href="dashbord.php"><i class="fas fa-h-square"></i> Gestion des Hôpitaux</a>
+        <span><i class="fas fa-hospital hopital-icon"></i></span>
+        <a href="dashbord.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a href="hopitaux.php"><i class="fas fa-h-square"></i> Gestion des Hôpitaux</a>
         <a href="doctors.php"><i class="fas fa-user-md"></i> Docteurs</a>
         <a href="patients.php"><i class="fas fa-procedures"></i> Patients</a>
         <a href="index.php"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
@@ -79,150 +131,112 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
         <h1>Bienvenue, <?php echo htmlspecialchars($_SESSION['username']); ?></h1>
         <p>Vous êtes connecté en tant qu'admin.</p>
         <div class="container">
-            <h2>Gestion des Hôpitaux</h2>
-            <a href="add_hospital.php" class="btn btn-primary">Ajouter un Hôpital</a>
-            <table class="table table-striped mt-3">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Nom</th>
-                        <th>Latitude</th>
-                        <th>Longitude</th>
-                        <th>Adresse</th>
-                        <th>Téléphone</th>
-                        <th>Horaires</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    // Connexion à la base de données
-                    $pdo = new PDO('mysql:host=localhost;dbname=soutenance1;charset=utf8', 'root', '');
-                    
-                    // Récupération des hôpitaux
-                    $stmt = $pdo->query("SELECT * FROM hopital JOIN adress ON hopital.id_ad = adress.id_ad");
-                    $index = 1; // Initialisation de l'index pour la numérotation
-                    while ($row = $stmt->fetch()) {
-                        echo "
-                        <tr>
-                            <td>{$index}</td> <!-- Utilisation de l'index pour la numérotation -->
-                            <td>{$row['nom']}</td>
-                            <td>{$row['latitude']}</td>
-                            <td>{$row['longitude']}</td>
-                            <td>{$row['ville']}, {$row['commune']}, {$row['arrondissement']}</td>
-                            <td>{$row['numero']}</td>
-                            <td>{$row['horaire']}</td>
-                            <td>
-                                <a href='edit_hospital.php?id={$row['id_hpt']}' class='btn btn-warning btn-sm'>Modifier</a>
-                                <a href='delete_hospital.php?id={$row['id_hpt']}' class='btn btn-danger btn-sm'>Supprimer</a>
-                            </td>
-                        </tr>";
-                        $index++; // Incrémentation de l'index
-                    }
-                    ?>
-                </tbody>
-            </table>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card text-white bg-primary">
+                        <div class="card-body d-flex align-items-center">
+                            <i class="fas fa-hospital card-icon"></i>
+                            <div>
+                                <div class="card-title">Hôpitaux</div>
+                                <div class="card-text"><?php echo $hospitalCount; ?></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-white bg-success">
+                        <div class="card-body d-flex align-items-center">
+                            <i class="fas fa-user-md card-icon"></i>
+                            <div>
+                                <div class="card-title">Docteurs</div>
+                                <div class="card-text"><?php echo $doctorCount; ?></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-white bg-danger">
+                        <div class="card-body d-flex align-items-center">
+                            <i class="fas fa-procedures card-icon"></i>
+                            <div>
+                                <div class="card-title">Patients</div>
+                                <div class="card-text"><?php echo $patientCount; ?></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="chart-container">
+            <div class="chart-wrapper">
+                <h3>Nombre de Docteurs au fil du temps</h3>
+                <canvas id="doctorsChart"></canvas>
+            </div>
+            <div class="chart-wrapper">
+                <h3>Nombre de Patients au fil du temps</h3>
+                <canvas id="patientsChart"></canvas>
+            </div>
         </div>
-
-        <div class="container">
-    <h2>Docteurs</h2>
-    <a href="add_doctor.php" class="btn btn-primary">Ajouter un Docteur</a>
-    <table class="table table-striped mt-3">
-        <thead>
-            <tr>
-                <th></th>
-                <th>Nom</th>
-                <th>Prénom</th>
-                <th>Sexe</th>
-                <th>Hôpital</th>
-                <th>Spécialité</th>
-                <th>Téléphone</th>
-                <th>Disponibilité</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-            // Connexion à la base de données
-            $pdo = new PDO('mysql:host=localhost;dbname=soutenance1;charset=utf8', 'root', '');
-
-            // Récupération des médecins
-            $stmt = $pdo->query("
-                SELECT docteur.*, hopital.nom AS hospital_name, speciality.libelle AS speciality_name 
-                FROM docteur 
-                JOIN hopital ON docteur.id_hpt = hopital.id_hpt 
-                JOIN speciality ON docteur.id_sp = speciality.id_sp
-                
-            ");
-            $index = 1; // Initialisation de l'index pour la numérotation
-            while ($row = $stmt->fetch()) {
-                echo "<tr>
-                    <td>{$index}</td> <!-- Utilisation de l'index pour la numérotation -->
-                    <td>{$row['nom']}</td>
-                    <td>{$row['prenom']}</td>
-                    <td>{$row['sexe']}</td>
-                    <td>{$row['hospital_name']}</td>
-                    <td>{$row['speciality_name']}</td>
-                    <td>{$row['numero']}</td>
-                    <td>{$row['disponibility']}</td>
-                    <td>
-                        <a href='edit_doctor.php?id={$row['id_doc']}' class='btn btn-warning btn-sm'>Modifier</a>
-                        <a href='delete_doctor.php?id={$row['id_doc']}' class='btn btn-danger btn-sm'>Supprimer</a>
-                    </td>
-                </tr>";
-                $index++; // Incrémentation de l'index
-            }
-            
-            ?>
-        </tbody>
-    </table>
-</div>
-
-
-        <div class="container">
-            <h2>Patients</h2>
-            <table class="table table-striped mt-3">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Nom</th>
-                        <th>Prénom</th>
-                        <th>Sexe</th>
-                        <th>Téléphone</th>
-                        <th>Email</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    // Connexion à la base de données
-                    $pdo = new PDO('mysql:host=localhost;dbname=soutenance1;charset=utf8', 'root', '');
-                    
-                    // Récupération des patients
-                    $stmt = $pdo->query("
-                         SELECT patient.*
-                        FROM patient
-                    ");
-                    $index = 1; // Initialisation de l'index pour la numérotation
-                    while ($row = $stmt->fetch()) {
-                        echo "<tr>
-                            <td>{$index}</td> <!-- Utilisation de l'index pour la numérotation -->
-                            <td>{$row['nom']}</td>
-                            <td>{$row['prenom']}</td>
-                            <td>{$row['sexe']}</td>
-                            <td>{$row['numero']}</td>
-                            <td>{$row['email']}</td>
-                            <td>
-                                <a href='edit_patient.php?id={$row['id_pat']}' class='btn btn-warning btn-sm'>Modifier</a>
-                                <a href='delete_patient.php?id={$row['id_pat']}' class='btn btn-danger btn-sm'>Supprimer</a>
-                            </td>
-                        </tr>";
-                        $index++; // Incrémentation de l'index
-                    }
-                    ?>
-                </tbody>
-            </table>
         </div>
     </div>
+    <script>
+        // Remplacez ces données par des données réelles issues de votre base de données
+        const doctorData = {
+            labels: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août'],
+            datasets: [{
+                label: 'Docteurs',
+                data: [10, 15, 12, 14, 18, 20, 22, 25],
+                borderColor: '#007bff',
+                backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        };
+
+        const patientData = {
+            labels: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août'],
+            datasets: [{
+                label: 'Patients',
+                data: [50, 55, 60, 65, 70, 75, 80, 90],
+                borderColor: '#28a745',
+                backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        };
+
+        const config = {
+            type: 'line',
+            data: doctorData,
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        };
+
+        const config2 = {
+            type: 'line',
+            data: patientData,
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        };
+
+        const doctorsChart = new Chart(
+            document.getElementById('doctorsChart'),
+            config
+        );
+
+        const patientsChart = new Chart(
+            document.getElementById('patientsChart'),
+            config2
+        );
+    </script>
 </body>
 </html>

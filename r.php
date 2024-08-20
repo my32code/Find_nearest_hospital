@@ -73,6 +73,7 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.kkiapay.me/k.js">
     <style>
         body {
             font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Verdana, sans-serif;
@@ -252,10 +253,61 @@
         <input type="hidden" name="hopitalId" value="<?= htmlspecialchars($hopitalId) ?>">
         
         <div class="form-line">
-            <button type="submit" id="submitBtn" class="form-submit">Soumettre</button>
         </div>
     </form>
+    <body>    
+            <form id="confirmation-form" action="paiement.php" method="post">        
+                <input type="hidden" name="nom" value="<?php echo htmlspecialchars($nom); ?>">       
+                <input type="hidden" name="email" value="<?php echo htmlspecialchars($email); ?>">       
+                <input type="hidden" name="disponibilite" value="<?php echo htmlspecialchars($disponibilite); ?>">
+                <input type="hidden" name="cycle" value="<?php echo htmlspecialchars($cycle); ?>">
+                <input type="hidden" name="classe" value="<?php echo htmlspecialchars($classe); ?>"> 
+                <input type="hidden" name="matiere" value="<?php echo htmlspecialchars($matiere); ?>">        
+                <input type="hidden" name="cv" value="<?php echo htmlspecialchars($cv); ?>">
+                <input type="hidden" name="identite" value="<?php echo htmlspecialchars($identite); ?>">
+                <input type="hidden" name="diplome" value="<?php echo htmlspecialchars($diplome); ?>">        
+                <input type="hidden" name="montant" value="<?php echo htmlspecialchars($montant); ?>">
+           </form>    
+           <div class="container">        
+           <h3>Vérifiez vos informations</h3>        
+           <table class="confirmation-table">
+            <tr>                
+            <th>Nom</th>                
+            <td><?php echo htmlspecialchars($nom); ?></td>
+            </tr>            
+            <tr>                
+            <th>Email</th>                
+            <td><?php echo htmlspecialchars($email); ?></td> 
+            </tr>            <tr>
+            <th>Disponibilité</th> 
+            <td><?php echo htmlspecialchars($disponibilite); ?></td>          
+            </tr>            <tr>                <th>Cycle</th>               
+            <td><?php echo htmlspecialchars($cycle); ?></td>            
+            </tr>            <tr>                <th>Classe</th>                
+            <td><?php echo htmlspecialchars($classe); ?></td>            </tr>
+            <tr>                <th>Matière</th>                
+            <td><?php echo htmlspecialchars($matiere); ?></td> 
 
-    
-</body>
-</html>
+            </tr>            <tr>   
+            <th>CV</th>                
+            <td><a href="../allsociety/img/<?php echo htmlspecialchars($cv); ?>" target="_blank">Télécharger CV</a></td>           
+            </tr>            <tr>                <th>Pièce d'identité</th>                
+            <td><a href="../allsociety/img/<?php echo htmlspecialchars($identite); ?>" target="_blank">Télécharger Pièce d'identité</a></td> 
+            </tr>            <tr>                <th>Diplôme</th>                
+           <td><a href="../allsociety/img/<?php echo htmlspecialchars($diplome); ?>" target="_blank">Télécharger Diplôme</a></td>
+            </tr>            <tr>                <th>Montant</th>               
+            <td><?php echo htmlspecialchars($montant); ?> FCFA</td>
+            </tr>        </table>
+        <h3>Finalisez votre paiement</h3> 
+            <div style="margin-left:300px;" id="kkiapay-container"></div>
+    </div>
+    <script src="https://cdn.kkiapay.me/k.js"></script>   
+     <script>    document.addEventListener('DOMContentLoaded', function () {        var montant = <?php echo json_encode($montant); ?>;  
+    var widgetContainer = document.getElementById('kkiapay-container');        var widget = document.createElement('kkiapay-widget');     
+    widget.setAttribute('amount', montant);        widget.setAttribute('key', '1b397c4051d911efa51cd9ada78c8bb7');
+             // Assurez-vous que la clé est correcte        widget.setAttribute('position', 'center');        widget.setAttribute('sandbox', 'true');        widget.setAttribute('data', '');        widgetContainer.appendChild(widget);
+        // Fonction pour gérer la redirection après le paiement        var redirectAfterPayment = function() {            var form = document.getElementById('confirmation-form');            var formData = new FormData(form);
+            // Envoyer les données du formulaire au même script PHP            fetch('paiement.php', {                method: 'POST',                body: formData            })            .then(response => response.json())            .then(data => {                if (data.status === 'success') {                    // Redirection vers l'URL spécifiée après paiement réussi                    window.location.href = data.redirect_url;                } else {                    alert('Erreur : ' + data.message);                }            })            .catch(error => {                console.error('Erreur lors de l\'envoi des données :', error);            });        };
+        // Écouter l'événement de paiement réussi        widget.addEventListener('payment-success', function() {            redirectAfterPayment();        });    });    </script></body>
+
+   

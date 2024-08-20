@@ -1,0 +1,576 @@
+// Fonction pour rediriger vers la page de prise de rendez-vous
+function prendreRendezVous(hopitalId) {
+    console.log("Redirection vers rendezvous.php avec l'ID de l'hôpital:", hopitalId);
+    window.location.href = `rendezvous.php?hopitalId=${hopitalId}`;
+}
+
+// Fonction pour obtenir la position de l'utilisateur
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition, showError);
+    } else {
+        document.getElementById("location").innerHTML = "La géolocalisation n'est pas supportée par ce navigateur.";
+    }
+}
+
+// Fonction pour afficher la position et générer les liens Google Maps
+function showPosition(position) {
+    const userLat = position.coords.latitude;
+    const userLng = position.coords.longitude;
+
+    let nearestHospitals = [];
+
+    // Trouver les hôpitaux les plus proches en fonction des coordonnées de l'utilisateur
+    hospitals.forEach(hospital => {
+        const distance = calculateDistance(userLat, userLng, hospital.latitude, hospital.longitude);
+        nearestHospitals.push({ 
+            ...hospital, 
+            distance 
+        });
+    });
+
+    // Trier les hôpitaux par distance
+    nearestHospitals.sort((a, b) => a.distance - b.distance);
+
+    // Afficher les liens Google Maps
+    displayHospitals(nearestHospitals);
+
+    // Fonction pour afficher les hôpitaux
+    function displayHospitals(hospitals) {
+        let hospitalsDiv = document.getElementById("hospitals");
+        hospitalsDiv.innerHTML = '<h2>Hôpitaux les plus proches</h2>';
+        hospitals.forEach(hospital => {
+            const link = `https://www.google.com/maps/search/?api=1&query=${hospital.latitude},${hospital.longitude}`;        
+            hospitalsDiv.innerHTML += 
+            `<div>
+                <p><a href="${link}" target="_blank">${hospital.nom}</a> - Distance: ${hospital.distance.toFixed(2)} km<br>Numéro: ${hospital.numero}<br>Spécialités: ${hospital.specialites}<br>Disponibilités: ${hospital.disponibilites}</p>
+                <button onclick="showDoctors(${hospital.id_hpt})">Voir les docteurs</button>
+            </div>`;    
+        });
+    }
+
+    // Fonction pour afficher les docteurs disponibles dans un hôpital
+    function showDoctors(hopitalId) {
+        // Appel AJAX pour récupérer les docteurs disponibles dans l'hôpital
+        fetch(`get_doctors.php?hopitalId=${hopitalId}`)
+            .then(response => response.json())
+            .then(doctors => {
+                let hospitalsDiv = document.getElementById("hospitals");
+                hospitalsDiv.innerHTML = '<h2>Docteurs disponibles</h2>';
+                doctors.forEach(doctor => {
+                    hospitalsDiv.innerHTML += 
+                    `<div>
+                        <p>Dr. ${doctor.nom} ${doctor.prenom} - Spécialité: ${doctor.specialite}<br>Disponibilités: ${doctor.disponibilites}</p>
+                        <button onclick="prendreRendezVousAvecDocteur(${doctor.id_doc}, ${hopitalId})">Prendre rendez-vous</button>
+                    </div>`;
+                });
+            })
+            .catch(error => console.error('Erreur:', error));
+    }
+
+    // Fonction pour rediriger vers la page de prise de rendez-vous avec l'ID du docteur et de l'hôpital
+    function prendreRendezVousAvecDocteur(doctorId, hopitalId) {
+        console.log("Redirection vers rendezvous.php avec l'ID du docteur:", doctorId, "et l'ID de l'hôpital:", hopitalId);
+        window.location.href = `rendezvous.php?doctorId=${doctorId}&hopitalId=${hopitalId}`;
+    }
+}
+
+// Fonction pour calculer la distance entre deux points (coordonnées en degrés)
+function calculateDistance(lat1, lng1, lat2, lng2) {
+    const R = 6371; // Rayon de la Terre en kilomètres
+    const dLat = deg2rad(lat2 - lat1);
+    const dLng = deg2rad(lng2 - lng1);
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+            Math.sin(dLng/2) * Math.sin(dLng/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+}
+
+// Fonction pour convertir des degrés en radians
+function deg2rad(deg) {
+    return deg * (Math.PI/180);
+}
+
+// Fonction pour afficher les erreurs de géolocalisation
+function showError(error) {
+    switch(error.code) {
+        case error.PERMISSION_DENIED:
+            document.getElementById("location").innerHTML = "L'utilisateur a refusé la demande de géolocalisation.";
+            break;
+        case error.POSITION_UNAVAILABLE:
+            document.getElementById("location").innerHTML = "Les informations de localisation ne sont pas disponibles.";
+            break;
+        case error.TIMEOUT:
+            document.getElementById("location").innerHTML = "La demande de localisation a expiré.";
+            break;
+        case error.UNKNOWN_ERROR:
+            document.getElementById("location").innerHTML = "Une erreur inconnue est survenue.";
+            break;
+    }
+}
+
+// Appeler la fonction pour obtenir la position de l'utilisateur
+getLocation();
+
+
+
+
+
+<?php
+session_start();
+
+// Vérifiez que l'utilisateur est connecté en tant qu'admin
+if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
+    header('Location: index.php');
+    exit();
+}
+?>
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            display: flex;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .sidebar {
+            width: 200px; /* Réduction de la taille de la barre latérale */
+            background-color: #007bff;
+            color: #fff;
+            padding-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px; /* Réduction de la taille de padding */
+            width: 100%;
+            text-decoration: none;
+            color: #fff;
+            transition: background-color 0.3s, transform 0.3s;
+            margin: 5px 0; /* Réduction de l'espacement entre les éléments */
+            flex-direction: column; /* Alignement des icônes et du texte */
+        }
+        .sidebar a:hover {
+            background-color: #0056b3;
+            transform: scale(1.1);
+        }
+        .sidebar a i {
+            margin-right: 10px;
+            font-size: 1.5em;
+        }
+        .sidebar .hopital-icon {
+            font-size: 5em; /* Augmentation de la taille de l'icône de l'utilisateur */
+            margin-bottom: 20px;
+        }
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+            background-color: #f8f9fa;
+            overflow-y: auto;
+        }
+        .container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <span><i class="fas fa-hospital hopital-icon"></i></span></a> <!-- Icône d'hopital agrandie -->
+        <a href="dashbord.php"><i class="fas fa-h-square"></i> Gestion des Hôpitaux</a>
+        <a href="doctors.php"><i class="fas fa-user-md"></i> Docteurs</a>
+        <a href="patients.php"><i class="fas fa-procedures"></i> Patients</a>
+        <a href="index.php"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+    </div>
+    <div class="content">
+        <h1>Bienvenue, <?php echo htmlspecialchars($_SESSION['username']); ?></h1>
+        <p>Vous êtes connecté en tant qu'admin.</p>
+        <div class="container">
+            <h2>Gestion des Hôpitaux</h2>
+            <a href="add_hospital.php" class="btn btn-primary">Ajouter un Hôpital</a>
+            <table class="table table-striped mt-3">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Nom</th>
+                        <th>Latitude</th>
+                        <th>Longitude</th>
+                        <th>Adresse</th>
+                        <th>Téléphone</th>
+                        <th>Horaires</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    // Connexion à la base de données
+                    $pdo = new PDO('mysql:host=localhost;dbname=soutenance1;charset=utf8', 'root', '');
+                    
+                    // Récupération des hôpitaux
+                    $stmt = $pdo->query("SELECT * FROM hopital JOIN adress ON hopital.id_ad = adress.id_ad");
+                    $index = 1; // Initialisation de l'index pour la numérotation
+                    while ($row = $stmt->fetch()) {
+                        echo "
+                        <tr>
+                            <td>{$index}</td> <!-- Utilisation de l'index pour la numérotation -->
+                            <td>{$row['nom']}</td>
+                            <td>{$row['latitude']}</td>
+                            <td>{$row['longitude']}</td>
+                            <td>{$row['ville']}, {$row['commune']}, {$row['arrondissement']}</td>
+                            <td>{$row['numero']}</td>
+                            <td>{$row['horaire']}</td>
+                            <td>
+                                <a href='edit_hospital.php?id={$row['id_hpt']}' class='btn btn-warning btn-sm'>Modifier</a>
+                                <a href='delete_hospital.php?id={$row['id_hpt']}' class='btn btn-danger btn-sm'>Supprimer</a>
+                            </td>
+                        </tr>";
+                        $index++; // Incrémentation de l'index
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="container">
+    <h2>Docteurs</h2>
+    <a href="add_doctor.php" class="btn btn-primary">Ajouter un Docteur</a>
+    <table class="table table-striped mt-3">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Sexe</th>
+                <th>Hôpital</th>
+                <th>Spécialité</th>
+                <th>Téléphone</th>
+                <th>Disponibilité</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+                // Connexion à la base de données
+                $pdo = new PDO('mysql:host=localhost;dbname=soutenance1;charset=utf8', 'root', '');
+
+                // Récupération des médecins
+                $stmt = $pdo->query("
+                SELECT docteur.*, hopital.nom AS hospital_name, speciality.libelle AS speciality_name 
+                FROM docteur 
+                JOIN hopital ON docteur.id_hpt = hopital.id_hpt 
+                JOIN speciality ON docteur.id_sp = speciality.id_sp
+                
+             ");
+                $index = 1; // Initialisation de l'index pour la numérotation
+          
+                while ($row = $stmt->fetch()) {
+                    // Décoder la disponibilité
+                    $disponibility = json_decode($row['disponibility'], true);
+                    $availability = [];
+
+                    if (json_last_error() === JSON_ERROR_NONE) {
+                        foreach ($disponibility as $dispo) {
+                            if (isset($dispo['start_time']) && isset($dispo['end_time'])) {
+                                $startDay = strftime('%A', strtotime($dispo['start_time'])); // Jour en français
+                                $startTime = date('H:i', strtotime($dispo['start_time'])); // Heure de début
+                                $endTime = date('H:i', strtotime($dispo['end_time'])); // Heure de fin
+
+                                // Ajouter la disponibilité au tableau
+                                if (!isset($availability[$startDay])) {
+                                    $availability[$startDay] = [];
+                                }
+                                $availability[$startDay][] = "$startTime - $endTime";
+                            }
+                        }
+                    } else {
+                        // Afficher une erreur si le JSON est mal formé
+                        $availability = "Erreur de décodage JSON : " . json_last_error_msg();
+                    }
+
+                    // Formater la disponibilité pour l'affichage
+                    $availabilityStr = '';
+                    foreach ($availability as $day => $times) {
+                        $availabilityStr .= $day . ': ' . implode(', ', $times) . '<br>';
+                    }
+                    echo "<tr>
+                    <td>{$index}</td> <!-- Utilisation de l'index pour la numérotation -->
+                    <td>{$row['nom']}</td>
+                    <td>{$row['prenom']}</td>
+                    <td>{$row['sexe']}</td>
+                    <td>{$row['hospital_name']}</td>
+                    <td>{$row['speciality_name']}</td>
+                    <td>{$row['numero']}</td>
+                    <td>{$availabilityStr}</td>
+                    <td>
+                        <a href='edit_doctor.php?id={$row['id_doc']}' class='btn btn-warning btn-sm'>Modifier</a>
+                        <a href='delete_doctor.php?id={$row['id_doc']}' class='btn btn-danger btn-sm'>Supprimer</a>
+                    </td>
+                </tr>";
+                $index++; // Incrémentation de l'index
+                }
+            
+            
+            ?>
+        </tbody>
+    </table>
+</div>
+
+
+        <div class="container">
+            <h2>Patients</h2>
+            <table class="table table-striped mt-3">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Sexe</th>
+                        <th>Téléphone</th>
+                        <th>Email</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    // Connexion à la base de données
+                    $pdo = new PDO('mysql:host=localhost;dbname=soutenance1;charset=utf8', 'root', '');
+                    
+                    // Récupération des patients
+                    $stmt = $pdo->query("
+                         SELECT patient.*
+                        FROM patient
+                    ");
+                    $index = 1; // Initialisation de l'index pour la numérotation
+                    while ($row = $stmt->fetch()) {
+                        echo "<tr>
+                            <td>{$index}</td> <!-- Utilisation de l'index pour la numérotation -->
+                            <td>{$row['nom']}</td>
+                            <td>{$row['prenom']}</td>
+                            <td>{$row['sexe']}</td>
+                            <td>{$row['numero']}</td>
+                            <td>{$row['email']}</td>
+                            <td>
+                                <a href='edit_patient.php?id={$row['id_pat']}' class='btn btn-warning btn-sm'>Modifier</a>
+                                <a href='delete_patient.php?id={$row['id_pat']}' class='btn btn-danger btn-sm'>Supprimer</a>
+                            </td>
+                        </tr>";
+                        $index++; // Incrémentation de l'index
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
+<?php
+session_start();
+
+// Vérifiez que l'utilisateur est connecté en tant qu'admin
+if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
+    header('Location: index.php');
+    exit();
+}
+
+// Connexion à la base de données
+$pdo = new PDO('mysql:host=localhost;dbname=soutenance1;charset=utf8', 'root', '');
+
+// Récupération des statistiques
+$hospitalsCount = $pdo->query("SELECT COUNT(*) FROM hopital")->fetchColumn();
+$doctorsCount = $pdo->query("SELECT COUNT(*) FROM docteur")->fetchColumn();
+$patientsCount = $pdo->query("SELECT COUNT(*) FROM patient")->fetchColumn();
+?>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+        .sidebar {
+            width: 200px;
+            background-color: #007bff;
+            color: #fff;
+            position: fixed;
+            height: 100%;
+            padding-top: 20px;
+        }
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            text-decoration: none;
+            color: #fff;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .sidebar a:hover {
+            background-color: #0056b3;
+            transform: scale(1.1);
+        }
+        .sidebar a i {
+            margin-right: 10px;
+            font-size: 1.5em;
+        }
+        .content {
+            margin-left: 220px;
+            padding: 20px;
+        }
+        .stat-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .stat-card h3 {
+            margin-top: 0;
+            font-size: 2em;
+        }
+        .chart-container {
+            margin-top: 30px;
+        }
+        .chart-wrapper {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="sidebar">
+        <a href="dashboard.php"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="hospitals.php"><i class="fas fa-h-square"></i> Hôpitaux</a>
+        <a href="doctors.php"><i class="fas fa-user-md"></i> Docteurs</a>
+        <a href="patients.php"><i class="fas fa-procedures"></i> Patients</a>
+        <a href="index.php"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+    </div>
+    <div class="content">
+        <h1>Bienvenue, <?php echo htmlspecialchars($_SESSION['username']); ?></h1>
+        <p>Vous êtes connecté en tant qu'admin.</p>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <i class="fas fa-h-square fa-3x"></i>
+                    <h3><?php echo $hospitalsCount; ?></h3>
+                    <p>Hôpitaux</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <i class="fas fa-user-md fa-3x"></i>
+                    <h3><?php echo $doctorsCount; ?></h3>
+                    <p>Docteurs</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <i class="fas fa-procedures fa-3x"></i>
+                    <h3><?php echo $patientsCount; ?></h3>
+                    <p>Patients</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-wrapper">
+                <h3>Nombre de Docteurs au fil du temps</h3>
+                <canvas id="doctorsChart"></canvas>
+            </div>
+            <div class="chart-wrapper">
+                <h3>Nombre de Patients au fil du temps</h3>
+                <canvas id="patientsChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Remplacez ces données par des données réelles issues de votre base de données
+        const doctorData = {
+            labels: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août'],
+            datasets: [{
+                label: 'Docteurs',
+                data: [10, 15, 12, 14, 18, 20, 22, 25],
+                borderColor: '#007bff',
+                backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        };
+
+        const patientData = {
+            labels: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août'],
+            datasets: [{
+                label: 'Patients',
+                data: [50, 55, 60, 65, 70, 75, 80, 90],
+                borderColor: '#28a745',
+                backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        };
+
+        const config = {
+            type: 'line',
+            data: doctorData,
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        };
+
+        const config2 = {
+            type: 'line',
+            data: patientData,
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        };
+
+        const doctorsChart = new Chart(
+            document.getElementById('doctorsChart'),
+            config
+        );
+
+        const patientsChart = new Chart(
+            document.getElementById('patientsChart'),
+            config2
+        );
+    </script>
+</body>
+</html>

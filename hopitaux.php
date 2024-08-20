@@ -1,9 +1,19 @@
+<?php
+session_start();
+
+// Vérifiez que l'utilisateur est connecté en tant qu'admin
+if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
+    header('Location: index.php');
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Patients</title>
+    <title>Document</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -68,16 +78,18 @@
     </div>
     <div class="content">
         <div class="container">
-            <h2>Patients</h2>
+            <h2>Gestion des Hôpitaux</h2>
+            <a href="add_hospital.php" class="btn btn-primary">Ajouter un Hôpital</a>
             <table class="table table-striped mt-3">
                 <thead>
                     <tr>
                         <th></th>
                         <th>Nom</th>
-                        <th>Prénom</th>
-                        <th>Sexe</th>
+                        <th>Latitude</th>
+                        <th>Longitude</th>
+                        <th>Adresse</th>
                         <th>Téléphone</th>
-                        <th>Email</th>
+                        <th>Horaires</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -86,31 +98,29 @@
                     // Connexion à la base de données
                     $pdo = new PDO('mysql:host=localhost;dbname=soutenance1;charset=utf8', 'root', '');
                     
-                    // Récupération des patients
-                    $stmt = $pdo->query("
-                        SELECT patient.*
-                        FROM patient 
-                        
-                    ");
+                    // Récupération des hôpitaux
+                    $stmt = $pdo->query("SELECT * FROM hopital JOIN adress ON hopital.id_ad = adress.id_ad");
+                    $index = 1; // Initialisation de l'index pour la numérotation
                     while ($row = $stmt->fetch()) {
-                        echo "<tr>
-                            <td>{$row['id_pat']}</td>
+                        echo "
+                        <tr>
+                            <td>{$index}</td> <!-- Utilisation de l'index pour la numérotation -->
                             <td>{$row['nom']}</td>
-                            <td>{$row['prenom']}</td>
-                            <td>{$row['sexe']}</td>
+                            <td>{$row['latitude']}</td>
+                            <td>{$row['longitude']}</td>
+                            <td>{$row['ville']}, {$row['commune']}, {$row['arrondissement']}</td>
                             <td>{$row['numero']}</td>
-                            <td>{$row['email']}</td>
+                            <td>{$row['horaire']}</td>
                             <td>
-                                <a href='edit_patient.php?id={$row['id_pat']}' class='btn btn-warning btn-sm'>Modifier</a>
-                                <a href='delete_patient.php?id={$row['id_pat']}' class='btn btn-danger btn-sm'>Supprimer</a>
+                                <a href='edit_hospital.php?id={$row['id_hpt']}' class='btn btn-warning btn-sm'>Modifier</a>
+                                <a href='delete_hospital.php?id={$row['id_hpt']}' class='btn btn-danger btn-sm'>Supprimer</a>
                             </td>
                         </tr>";
-                    }
-                    ?>
-                </tbody>
-            </table>
-        </div>  
-    </div>
-
+                    $index++; // Incrémentation de l'index
+                }
+                ?>
+            </tbody>
+        </table>
+     </div>
 </body>
 </html>
